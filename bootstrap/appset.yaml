@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  creationTimestamp: null
+  name: test-appset
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      files:
+      - path: apps/**/test/config.json
+      repoURL: https://ghe-trial.devops.cf-cd.com/gh-admin/argocd.git
+      requeueAfterSeconds: 20
+      revision: ""
+      template:
+        metadata: {}
+        spec:
+          destination: {}
+          project: ""
+          source:
+            repoURL: ""
+  syncPolicy: {}
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{ annotations.argocd_argoproj_io_sync-wave
+          }}'
+      labels:
+        app.kubernetes.io/managed-by: argocd-autopilot
+        app.kubernetes.io/name: '{{ appName }}'
+        codefresh.io/entity: '{{ labels.codefresh_io_entity }}'
+        codefresh.io/internal: '{{ labels.codefresh_io_internal }}'
+      name: test-appset-{{ userGivenName }}
+      namespace: argocd
+    spec:
+      destination:
+        namespace: '{{ destNamespace }}'
+        server: '{{ destServer }}'
+      ignoreDifferences:
+      - group: argoproj.io
+        jsonPointers:
+        - /status
+        kind: Application
+      project: default
+      source:
+        path: '{{ srcPath }}'
+        repoURL: '{{ srcRepoURL }}'
+        targetRevision: '{{ srcTargetRevision }}'
+      syncPolicy:
+        automated:
+          allowEmpty: true
+          prune: true
+          selfHeal: true
+status: {}

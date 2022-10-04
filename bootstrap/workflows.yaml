@@ -1,0 +1,32 @@
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "0"
+#   finalizers:
+#   - resources-finalizer.argocd.argoproj.io
+#   labels:
+#     app.kubernetes.io/managed-by: argocd-autopilot
+#     app.kubernetes.io/name: workflows
+#     codefresh.io/entity: component
+#     codefresh.io/internal: "true"
+#   name: test-workflows
+#   namespace: argocd
+# spec:
+#   destination:
+#     namespace: argocd
+#     server: https://kubernetes.default.svc
+#   ignoreDifferences:
+#   - group: argoproj.io
+#     jsonPointers:
+#     - /status
+#     kind: Application
+#   project: default
+#   source:
+#     path: apps/workflows/overlays/test
+#     repoURL: https://ghe-trial.devops.cf-cd.com/gh-admin/argocd.git
+#   syncPolicy:
+#     automated:
+#       allowEmpty: true
+#       prune: true
+#       selfHeal: true
